@@ -1,0 +1,5 @@
+#  TO DO
+
+# cas prijezdu a cas odjezdu rano a vecer
+# - dalsi vydaje (noclezne, parkovani)
+# - platba hotovsti: hovost / ccs karta

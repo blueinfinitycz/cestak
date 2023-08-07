@@ -1,0 +1,1 @@
+export const ERROR_CANCELED = 'REQUEST_CANCELED';

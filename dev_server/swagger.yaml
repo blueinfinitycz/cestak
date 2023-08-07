@@ -1,0 +1,486 @@
+openapi: 3.0.3
+info:
+  title: Kniha jízd - OpenAPI 3.0
+  version: 1.0.0
+  description: Internal system for travel order, log book
+  contact:
+    name: Robert Chytil
+    email: robertchytil@gmail.com
+servers:
+  - url: https://localhost:4005/
+    description: Dev server
+
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      requestBody:
+        description: Log in to the system
+        required: true
+        content:
+           application/x-www-form-urlencoded:
+              schema:
+                $ref: "#/components/schemas/LoginApiRequest"
+      responses:
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        400:
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginApiResponse"
+  /logout:
+    get:
+      tags:
+        - Logout
+      description: Log out user
+      responses:
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        400:
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        200:
+          description: User has been log out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /token:
+    post:
+      tags:
+        - Generate token
+      description: Generate token
+      responses:
+        200:
+          description: token has been generated
+    parameters:
+      - name: refreshToken
+        in: query
+        description: refresh token
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+  /getCars:
+    get:
+      tags:
+        - Get cars
+      description: Get basic data about all available cars used in company
+      responses:
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        400:
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        200:
+          description: user data from log book has been retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCarsApiResponse"
+  /cars/{carId}:
+    get:
+      tags:
+        - Get log book
+      description: Get latest logbook according car id
+      responses:
+        200:
+          description: retrieved object array of all cars
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogBookApiResponse"
+
+      parameters:
+        - name: carId
+          in: path
+          description: logbook based on id
+          required: true
+          schema:
+            type: integer
+  /record:
+    post:
+      tags:
+        - Create record
+      requestBody:
+        description: add new record
+        required: true
+        content:
+           application/x-www-form-urlencoded:
+              schema:
+                  $ref: "#/components/schemas/record"
+              
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/record"
+  
+  /record/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: record id
+    get:
+      tags:
+        - Get record
+      summary: get particular record of logbook by id
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: according id get specific record
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/record"
+    put:
+      summary: updates an existing record based on specific id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: numeric id required
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                column:
+                  type: string
+                value:
+                  type: string
+              required:
+                - id
+                - column
+                - value
+            encoding:
+              id:
+                allowReserved: true
+              column:
+                allowReserved: true
+              value:
+                allowReserved: true
+                
+
+      responses:
+        "200":
+          description: Record has been updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+    delete:
+      tags:
+          - Delete record
+      summary: Delete specific record
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: delete particular record
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Record has been deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+components:
+  schemas:
+    LoginApiRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    LoginApiResponse:
+      type: object
+      properties:
+        role:
+          type: string
+        userId:
+          type: string
+          format: int64
+        displayName:
+          type: string
+        email:
+          type: string
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+
+    GetCarsApiResponse:
+      type: object
+      properties:
+        cars:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              spz:
+                type: string
+              carBrand:
+                type: string
+              responsiblePerson:
+                type: string
+              notes:
+                type: string
+
+    LogBookApiResponse:
+      type: object
+      properties:
+        carInfo:
+          $ref: "#/components/schemas/car"
+        logBook:
+          type: array
+          items:
+            $ref: "#/components/schemas/record"
+
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    record:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        journeyFrom:
+          type: string
+        journeyVia:
+          type: string
+        journeyTo:
+          type: string
+        departure:
+          type: string
+        arrival:
+          type: string
+        speedometer:
+          type: string
+        fuel:
+          type: string
+        cost:
+          type: string
+        diets:
+          type: string
+        overnight:
+          type: string
+        methodOfPayment:
+          type: string
+        signature:
+          type: string
+    car:
+      type: object
+      properties:
+        owner:
+          type: string
+        responsiblePerson:
+          type: string
+        vehicleBrand:
+          type: string
+        spz:
+          type: string
+        typeOfPhm:
+          $ref: "#/components/schemas/typeOfPhm"
+        speedometerCurrentState:
+          type: number
+        vinCode:
+          type: string
+        category:
+          $ref: "#/components/schemas/categoryOfVehicle"
+        yearOfManufacture:
+          type: number
+        technicalLicenseNumber:
+          type: string
+        engineCapacity:
+          type: number
+        tankVolume:
+          type: number
+        companyCenter:
+          type: string
+        averageConsumption:
+          type: string
+        validityOfRoadStamp:
+          type: string
+        appointmentOfServiceVisits:
+          type: string
+        termStk:
+          type: string
+        serviceAccordingToKm:
+          type: string
+        serviceAccordingToMonth:
+          type: string
+        dateOfAcquisition:
+          type: string
+        dateOfWithdrawal:
+          type: string
+        speedometerAtTheTimeOfPurchase:
+          type: string
+        insurance:
+          type: string
+        greenCardNumber:
+          type: string
+        leasingCompany:
+          type: string
+        creditCard:
+          type: string
+    categoryOfVehicle:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+    typeOfPhm:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+    methodOfPayment:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      description: JWT token
+      in: header
